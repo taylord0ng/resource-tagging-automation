@@ -1,3 +1,7 @@
+# https://docs.aws.amazon.com/zh_cn/AWSCloudFormation/latest/UserGuide/using-cfn-cli-creating-stack.html
+# https://docs.aws.amazon.com/zh_cn/AWSCloudFormation/latest/UserGuide/using-cfn-cli-package.html
+# aws cloudformation create-stack --stack-name resource-tagging-automation --template-body file://./resource-tagging-automation.yaml --capabilities CAPABILITY_IAM
+# aws cloudformation update-stack --stack-name resource-tagging-automation --template-body file://./resource-tagging-automation.yaml --capabilities CAPABILITY_IAM
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: MIT-0
 #
@@ -20,7 +24,7 @@ Description: AWS auto tagging for service EC2, S3, DynamoDB, RDS, Lambda, EFS, E
 Parameters:
   AutomationTags:
     Type: String
-    Default: ''
+    Default: '{"map-migrated": "d-server-00fe20dt0afk2h", "aws-migration-project-id": "MPE38019", "map-migrated-app": "APP01"}'
     Description: 'Sample: {"TagName1": "TagValue1","TagName2": "TagValue2"}'
 
   LambdaAutoTaggingFunctionName:
@@ -122,6 +126,9 @@ Resources:
                   - 'cloudformation:DescribeStacks'
                   - 'cloudformation:ListStackResources'
                   - 'resource-groups:*'
+
+                  # Rules for ECR
+                  - 'ecr:TagResource'
                 Resource: '*'
 
   LambdaAutoTagging:
@@ -273,6 +280,13 @@ Resources:
                       arnList.append(event['detail']['responseElements']['domainStatus']['aRN'])
                       return arnList
 
+              def aws_ecr(event):
+                  arnList = []
+                  if event['detail']['eventName'] == 'CreateRepository':
+                      print("tagging for new open ecr...")
+                      arnList.append(event['detail']['responseElements']['repository']['repositoryArn'])
+                      return arnList
+
               def main(event, context):
                   print("input event is: ")
                   print(event)
@@ -308,10 +322,10 @@ Resources:
       Name: !Ref EventBridgeRuleName
       EventPattern: '{
                       "detail": {
-                        "eventSource": ["ec2.amazonaws.com", "elasticloadbalancing.amazonaws.com", "s3.amazonaws.com", "rds.amazonaws.com", "lambda.amazonaws.com", "dynamodb.amazonaws.com", "elasticfilesystem.amazonaws.com", "es.amazonaws.com", "sqs.amazonaws.com", "sns.amazonaws.com", "kms.amazonaws.com"],
-                        "eventName": ["RunInstances", "CreateFunction20150331", "CreateBucket", "CreateDBInstance", "CreateTable", "CreateVolume", "CreateLoadBalancer", "CreateMountTarget", "CreateDomain", "CreateQueue", "CreateTopic", "CreateKey"]
+                        "eventSource": ["ec2.amazonaws.com", "elasticloadbalancing.amazonaws.com", "s3.amazonaws.com", "rds.amazonaws.com", "lambda.amazonaws.com", "dynamodb.amazonaws.com", "elasticfilesystem.amazonaws.com", "es.amazonaws.com", "sqs.amazonaws.com", "sns.amazonaws.com", "kms.amazonaws.com", "ecr.amazonaws.com"],
+                        "eventName": ["RunInstances", "CreateFunction20150331", "CreateBucket", "CreateDBInstance", "CreateTable", "CreateVolume", "CreateLoadBalancer", "CreateMountTarget", "CreateDomain", "CreateQueue", "CreateTopic", "CreateKey", "CreateRepository"]
                       },
-                      "source": ["aws.ec2", "aws.elasticloadbalancing", "aws.rds", "aws.lambda", "aws.s3", "aws.dynamodb", "aws.elasticfilesystem", "aws.es", "aws.sqs", "aws.sns", "aws.kms"]
+                      "source": ["aws.ec2", "aws.elasticloadbalancing", "aws.rds", "aws.lambda", "aws.s3", "aws.dynamodb", "aws.elasticfilesystem", "aws.es", "aws.sqs", "aws.sns", "aws.kms", "aws.ecr"]
                     }'
       Targets: 
         - Arn: !GetAtt LambdaAutoTagging.Arn 

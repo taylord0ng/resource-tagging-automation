@@ -1,0 +1,81 @@
+{
+   "version":"0",
+   "id":"2790ac85-7fbe-ab30-43c6-b9f51293530f",
+   "detail-type":"AWS API Call via CloudTrail",
+   "source":"aws.ecr",
+   "account":"000000",
+   "time":"2022-08-24T09:14:04Z",
+   "region":"us-east-1",
+   "resources":[
+      
+   ],
+   "detail":{
+      "eventVersion":"1.08",
+      "userIdentity":{
+         "type":"IAMUser",
+         "principalId":"AIDA432EYCB5GC7UTH2CZ",
+         "arn":"arn:aws:iam::000000:user/xxx",
+         "accountId":"000000",
+         "accessKeyId":"ASIA432EYCB5LW5QG6P",
+         "userName":"xxx",
+         "sessionContext":{
+            "sessionIssuer":{
+               
+            },
+            "webIdFederationData":{
+               
+            },
+            "attributes":{
+               "creationDate":"2022-08-24T07:20:04Z",
+               "mfaAuthenticated":"false"
+            }
+         }
+      },
+      "eventTime":"2022-08-24T09:14:04Z",
+      "eventSource":"ecr.amazonaws.com",
+      "eventName":"CreateRepository",
+      "awsRegion":"us-east-1",
+      "sourceIPAddress":"AWS Internal",
+      "userAgent":"AWS Internal",
+      "requestParameters":{
+         "repositoryName":"testtag2",
+         "imageTagMutability":"MUTABLE",
+         "imageScanningConfiguration":{
+            "scanOnPush":false
+         },
+         "encryptionConfiguration":{
+            "encryptionType":"AES256"
+         }
+      },
+      "responseElements":{
+         "repository":{
+            "repositoryArn":"arn:aws:ecr:us-east-1:000000:repository/testtag2",
+            "registryId":"000000",
+            "repositoryName":"testtag2",
+            "repositoryUri":"000000.dkr.ecr.us-east-1.amazonaws.com/testtag2",
+            "createdAt":"Aug 24, 2022, 9:14:04 AM",
+            "imageTagMutability":"MUTABLE",
+            "imageScanningConfiguration":{
+               "scanOnPush":false
+            },
+            "encryptionConfiguration":{
+               "encryptionType":"AES256"
+            }
+         }
+      },
+      "requestID":"b7934b9d-2455-47c7-b8d3-04d0570761cb",
+      "eventID":"9fdf6ad6-bd7d-4946-af78-004d825b452b",
+      "readOnly":false,
+      "resources":[
+         {
+            "accountId":"000000",
+            "ARN":"arn:aws:ecr:us-east-1:000000:repository/testtag2"
+         }
+      ],
+      "eventType":"AwsApiCall",
+      "managementEvent":true,
+      "recipientAccountId":"000000",
+      "eventCategory":"Management",
+      "sessionCredentialFromConsole":"true"
+   }
+}
